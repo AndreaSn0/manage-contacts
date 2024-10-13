@@ -24,12 +24,37 @@ export default function CustomCalendar({ selected, onSelect }: CalendarProps) {
     'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
   ]
 
+  const [contactCounts, setContactCounts] = useState<{ date: string; count: number }[]>([]);
+
+  // Fetch contact counts on component mount
+  React.useEffect(() => {
+    const fetchContactCounts = async () => {
+      try {
+        const response = await fetch(`/api/contacts?range=true`);
+        const data = await response.json();
+        setContactCounts(data);
+      } catch (error) {
+        console.error("Error fetching contact counts:", error);
+      }
+    };
+
+    fetchContactCounts();
+  }, []);
+
+
   const getDayData = (date: Date): DayData => {
+    // Manually format the date to 'yyyy-MM-dd'
+    const formattedDate = date.toISOString().split('T')[0]; // This gives 'yyyy-MM-dd'
+  
+    // Find the matching entry in contactCounts by date
+    const contactCountEntry = contactCounts.find(contact => contact.date === formattedDate);
+  
     return {
-      contracts: Math.floor(Math.random() * 30),
-      calls: Math.floor(Math.random() * 30)
-    }
-  }
+      contracts: 0, // Assuming contracts is always 0, replace as needed
+      calls: contactCountEntry ? contactCountEntry.count : 0 // Get count or 0 if no match
+    };
+  };
+  
 
   useEffect(() => {
     const newMonthData: { [key: number]: DayData } = {}
