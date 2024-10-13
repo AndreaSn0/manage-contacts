@@ -110,7 +110,7 @@ export default function CustomCalendar({ selected, onSelect }: CalendarProps) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
       const isToday = date.toDateString() === today.toDateString()
       const isSelected = selected && date.toDateString() === selected.toDateString()
-      const isPassed = date < yesterday && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
+      const isPassed = date <= yesterday && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
       const dayData = monthData[day] || { contracts: 0, calls: 0 }
       const colorClass = getColorClass(dayData.contracts, dayData.calls)
 

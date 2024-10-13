@@ -20,26 +20,26 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { debug } from "console"
 
-function transformString(input: string): string {
-  // Regular expression to match HTML tags and text nodes
-  const parts = input.split(/(<[^>]+>)/).filter(Boolean); // Split by HTML tags
-
-  // Transform the parts
-  const transformedParts = parts.map(part => {
-    // If the part is an HTML tag, replace <div> with a line break
-    if (part.startsWith('<') && part.endsWith('>')) {
-      return part === '<div>' ? '<br />' : part; // Replace <div> with <br />
-    }
-    // Return plain text as is (no quotes)
-    return part.trim();
-  });
-
-  // Join the parts back together
-  return transformedParts.join('');
-}
-
 
 export default function AddContactPage() {
+  
+  function transformString(input: string): string {
+    // Regular expression to match HTML tags and text nodes
+    const parts = input.split(/(<[^>]+>)/).filter(Boolean); // Split by HTML tags
+  
+    // Transform the parts
+    const transformedParts = parts.map(part => {
+      // If the part is an HTML tag, replace <div> with a line break
+      if (part.startsWith('<') && part.endsWith('>')) {
+        return part === '<div>' ? '<br />' : part; // Replace <div> with <br />
+      }
+      // Return plain text as is (no quotes)
+      return part.trim();
+    });
+  
+    // Join the parts back together
+    return transformedParts.join('');
+  }
 
   type Contact = {
     name: string;
