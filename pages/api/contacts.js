@@ -94,7 +94,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ message: "Error checking contact." });
     }
   } else if (req.method === "POST") {
-    const { name, phone, email, nextCallDate, timesCalled, overwrite } = req.body;
+    const { name, phone, email, nextCallDate, timesCalled, overwrite, description} = req.body;
 
     if (!name || !phone || !email || !nextCallDate || !timesCalled) {
       return res.status(400).json({ message: "All fields are required." });
@@ -117,6 +117,7 @@ export default async function handler(req, res) {
         email,
         nextCallDate: new Date(nextCallDate), // Ensure this is a Date object
         timesCalled: parseInt(timesCalled, 10),
+        description
       };
 
       const result = await collection.insertOne(contact);

@@ -9,6 +9,7 @@ import { it } from 'date-fns/locale';
 import { Button } from "@/components/ui/button"
 import { CustomCalendar } from "@/components/ui/custom-calendar"
 import { Input } from "@/components/ui/input"
+import {TextEditor} from '@/components/ui/text-editor';
 import {
   Select,
   SelectContent,
@@ -17,6 +18,26 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { debug } from "console"
+
+function transformString(input: string): string {
+  // Regular expression to match HTML tags and text nodes
+  const parts = input.split(/(<[^>]+>)/).filter(Boolean); // Split by HTML tags
+
+  // Transform the parts
+  const transformedParts = parts.map(part => {
+    // If the part is an HTML tag, replace <div> with a line break
+    if (part.startsWith('<') && part.endsWith('>')) {
+      return part === '<div>' ? '<br />' : part; // Replace <div> with <br />
+    }
+    // Return plain text as is (no quotes)
+    return part.trim();
+  });
+
+  // Join the parts back together
+  return transformedParts.join('');
+}
+
 
 export default function AddContactPage() {
 
@@ -26,6 +47,7 @@ export default function AddContactPage() {
     email: string;
     nextCallDate: string; // or Date if you parse it correctly
     timesCalled: number; // Assuming this is stored as a number
+    description: string;
   };
 
   const [name, setName] = useState("")
@@ -33,6 +55,7 @@ export default function AddContactPage() {
   const [email, setEmail] = useState("")
   const [nextCallDate, setNextCallDate] = useState<Date | undefined>(undefined)
   const [timesCalled, setTimesCalled] = useState("0")
+  const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [existingContact, setExistingContact] = useState<Contact | null>(null);
@@ -95,12 +118,9 @@ export default function AddContactPage() {
       nextCallDate: formattedDate,
       timesCalled,
       overwrite,
+      description
     };
-
-    console.log(payload.name);
-    console.log(payload.email);
-    console.log(payload.timesCalled);
-    console.log(payload.nextCallDate);
+    console.log(description);
 
     try {
       const response = await fetch("/api/contacts", {
@@ -120,14 +140,10 @@ export default function AddContactPage() {
         description: "Contact added successfully!",
       });
 
-      console.log(payload.name);
-      console.log(payload.email);
-      console.log(payload.timesCalled);
-      console.log(payload.nextCallDate);
-
       setName("");
       setPhone("");
       setEmail("");
+      setDescription("");
       setNextCallDate(undefined);
       setTimesCalled("0");
       setOverwrite(false);
@@ -199,6 +215,8 @@ export default function AddContactPage() {
                 </SelectContent>
               </Select>
             </div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">Descrizione</label>
+            <TextEditor value={description} onChange={setDescription}/>
           </div>
           <div className="w-full md:w-1/2 flex flex-col items-center">
             <h2 className="text-xl font-semibold mb-4">Prossima Chiamata:</h2>
@@ -240,6 +258,10 @@ export default function AddContactPage() {
                         <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
                       </div>
                     </div>
+                  </div>
+                  <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+                    <label className="text-sm font-medium text-gray-700">Descrizione:</label>
+                    <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }} />
                   </div>
                 </div>
         )}
