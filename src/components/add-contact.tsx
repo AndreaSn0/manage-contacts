@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { format } from "date-fns"
+import { it } from 'date-fns/locale';
 
 import { Button } from "@/components/ui/button"
 import { CustomCalendar } from "@/components/ui/custom-calendar"
@@ -203,7 +204,7 @@ export default function AddContactPage() {
             {errors.nextCallDate && <p className="mt-1 text-sm text-red-600 ">{errors.nextCallDate}</p>}
             {nextCallDate && (
               <p className="mt-2 text-sm text-muted-foreground text-lg">
-                Data Selezionata: {format(nextCallDate, 'PPP')}
+                Data Selezionata: {format(nextCallDate, 'dd-MM-yyyy', { locale: it })}
               </p>
             )}
           </div>
@@ -227,7 +228,7 @@ export default function AddContactPage() {
                       </div>
                       <div className="flex flex-col p-4 border rounded-lg border-gray-300">
                         <label className="text-sm font-medium text-gray-700">Prossima Chiamata:</label>
-                        <p className="mt-1 text-lg">{existingContact.nextCallDate}</p>
+                        <p className="mt-1 text-lg">{existingContact.nextCallDate ? format(new Date(existingContact.nextCallDate), 'dd-MM-yyyy') : 'Nessuna data disponibile'}</p>
                       </div>
                       <div className="flex flex-col p-4 border rounded-lg border-gray-300">
                         <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
