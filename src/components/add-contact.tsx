@@ -74,12 +74,17 @@ export default function AddContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setIsLoading(true);
+    if (!validateForm()){
+      setIsLoading(false);
+      return;
+    } 
 
     const isExisting = await checkExistingContact();
-    if (isExisting && !overwrite) return; // Fermiamo solo se non c'è sovrascrittura
-
-    setIsLoading(true);
+    if (isExisting && !overwrite){
+      setIsLoading(false);
+      return;
+    } 
     
     const formattedDate = nextCallDate ? format(nextCallDate, 'yyyy-MM-dd') : undefined;
     
