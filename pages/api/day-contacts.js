@@ -22,18 +22,25 @@ if (process.env.NODE_ENV === "development") {
 }
 
 export default async function handler(req, res) {
-  const client = await clientPromise;
-  const db = client.db("contacts");
-  const collection = db.collection("contactsCollection");
-
-  if (req.method === "GET") {
-    const { date } = new Date(req.query);
-    try{
-    const existingContacts = await collection.find({ date: date }).toArray();
-    console.log(date);
+    const client = await clientPromise;
+    const db = client.db("contacts");
+    const collection = db.collection("contactsCollection");
+  
+    if (req.method === "GET") {
+      const { date } = req.query;
+      
+      try {
+        // Ensure the date is parsed and time is set to 00:00:00
+        const queryDate = new Date(date);
+        queryDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
+  
+        // Find contacts where the date matches exactly (since stored dates also have time set to 00:00:00)
+        const existingContacts = await collection.find({ date: queryDate }).toArray();
+        
         return res.status(200).json(existingContacts);
       } catch (error) {
         return res.status(500).json({ message: "Error retrieving contacts from date." });
       }
     }
-}
+  }
+  
