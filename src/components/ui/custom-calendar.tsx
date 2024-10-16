@@ -42,7 +42,7 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
   const getDayData = (date: Date): DayData => {
     // Subtract one day from the current date
     const previousDate = new Date(date);
-    previousDate.setDate(previousDate.getDate() + 1); // Decrement the day by one
+    previousDate.setDate(previousDate.getDate() + 1);
   
     // Format the date to 'yyyy-MM-dd'
     const formattedDate = previousDate.toISOString().split('T')[0]; // This gives 'yyyy-MM-dd'
