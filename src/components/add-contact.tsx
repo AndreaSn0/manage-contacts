@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { it } from 'date-fns/locale';
+import { Phone, Mail, PhoneCall } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CustomCalendar } from "@/components/ui/custom-calendar"
 import { Input } from "@/components/ui/input"
 import {TextEditor} from '@/components/ui/text-editor';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -305,49 +307,38 @@ export default function AddContactPage() {
         </div>
       </form>
         {((existingContacts.length > 0) && nextCallDate && !newDateChosen)? (
-
-
-
-
-
-
-
-<div className="container mx-auto p-4">
-<h1 className="text-2xl font-bold mb-4">Contatti da chiamare nel {nextCallDate
-              ? format(new Date(nextCallDate), "dd-MM-yyyy")
-              : "Nessuna data disponibile"}</h1>
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead className="w-[50px]">#</TableHead>
-      <TableHead>Nome</TableHead>
-      <TableHead>Telefono</TableHead>
-      <TableHead>Email</TableHead>
-      <TableHead>Numero Chiamate già effettuate</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-  {existingContacts.map((existingContact, index) => (
-      <React.Fragment key={index}>
-        <TableRow>
-          <TableCell rowSpan={2} className="font-medium">
-            {index + 1}
-          </TableCell>
-          <TableCell>{existingContact.name}</TableCell>
-          <TableCell>{existingContact.phone}</TableCell>
-          <TableCell>{existingContact.email}</TableCell>
-          <TableCell>{existingContact.timesCalled}</TableCell>
-        </TableRow>
-        <TableRow className="border-b border-black">
-          <TableCell colSpan={4} className="italic text-gray-600">
-            Descrizione: <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-    ))}
-  </TableBody>
-</Table>
-  </div>
+<div className="container mx-auto p-4 max-w-3xl">
+      <h1 className="text-2xl font-bold mb-6">Lista Contatti</h1>
+      {existingContacts.map((existingContact, index) => (
+        <Card key={index} className="mb-4 overflow-hidden">
+          <CardContent className="p-0">
+            <div className="p-4 bg-gray-50">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-xl font-semibold">{existingContact.name}</h2>
+                <Badge variant="secondary" className="text-sm">
+                  #{index + 1}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600 mb-2" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}/>
+              <div className="flex flex-wrap gap-4 text-sm">
+                <div className="flex items-center gap-1">
+                  <Phone className="w-4 h-4" />
+                  {existingContact.phone}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Mail className="w-4 h-4" />
+                  {existingContact.email}
+                </div>
+                <div className="flex items-center gap-1">
+                  <PhoneCall className="w-4 h-4" />
+                  {existingContact.timesCalled} chiamate
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
 ) : (
   <p></p>
 )}
