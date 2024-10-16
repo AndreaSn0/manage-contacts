@@ -252,13 +252,11 @@ export default function AddContactPage() {
                 Data Selezionata: {format(nextCallDate, 'dd-MM-yyyy', { locale: it })}
               </p>
             )}
-        {nextCallDate && <div
-        onClick={(e) => {!(!nextCallDate || isLoading) ? fetchContacts : undefined;
-          setNewDateChosen(false);
-        }}
-        className={`ml-4 bg-black text-white p-2 rounded-lg cursor-pointer w-auto text-center ${(!nextCallDate || isLoading) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
-        style={{ pointerEvents: (!nextCallDate || isLoading) ? 'none' : 'auto' }}
-      >
+        {nextCallDate &&   <div
+    onClick={!(!nextCallDate || isLoading) ? () => { fetchContacts(); setNewDateChosen(false); } : undefined}
+    className={`ml-4 bg-black text-white p-2 rounded-lg cursor-pointer w-auto text-center ${(!nextCallDate || isLoading) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
+    style={{ pointerEvents: (!nextCallDate || isLoading) ? 'none' : 'auto' }}
+  >
         {isLoading ? "Caricamento..." : "Guarda contatti in quella data"}
       </div>}
           </div>
