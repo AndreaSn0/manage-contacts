@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     try{
     const existingContacts = await collection.find({ date }).toArray();
     console.log(date);
-        return res.status(200).json(existingContacts);
+        return res.status(200).json({ message: { date}});
       } catch (error) {
         return res.status(500).json({ message: "Error retrieving contacts from date." });
       }
