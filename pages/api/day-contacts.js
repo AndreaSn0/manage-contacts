@@ -1,5 +1,6 @@
 import { MongoClient } from "mongodb";
 
+
 const uri = process.env.MONGODB_URI;
 const options = {
   useNewUrlParser: true,
@@ -26,10 +27,9 @@ export default async function handler(req, res) {
   const collection = db.collection("contactsCollection");
 
   if (req.method === "GET") {
-    const { date } = new Date(req.query);
-    const fir = new Date("16-10-2024");
+    const { date } = req.query;
     try{
-    const existingContacts = await collection.find(fir).toArray();
+    const existingContacts = await collection.find({ date }).toArray();
     console.log(date);
         return res.status(200).json(existingContacts);
       } catch (error) {
