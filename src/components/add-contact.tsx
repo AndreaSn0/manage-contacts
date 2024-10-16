@@ -22,7 +22,7 @@ import { debug } from "console"
 
 
 export default function AddContactPage() {
-  
+
   function transformString(input: string): string {
     // Regular expression to match HTML tags and text nodes
     const parts = input.split(/(<[^>]+>)/).filter(Boolean); // Split by HTML tags
@@ -60,24 +60,42 @@ export default function AddContactPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [existingContact, setExistingContact] = useState<Contact | null>(null);
   const [overwrite, setOverwrite] = useState(false)
+  const [existingContacts, setExistingContacts] = useState<Contact[]>([]);
 
   const router = useRouter()
   const { toast } = useToast()
+  
+  const fetchContacts = async () => {
+    try {
+      const response = await fetch(`/api/day-contacts?date=${name}`);
+      const data = await response.json();
+      
+      // Ensure the data is an array and not undefined/null
+      if (Array.isArray(data)) {
+        setExistingContacts(data);
+      } else {
+        setExistingContacts([]); // Set empty array if data is not an array
+      }
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+      setExistingContacts([]); // Set empty array in case of error
+    }
+  };
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {}
 
     if (name.length < 2) {
-      newErrors.name = "Name must be at least 2 characters."
+      newErrors.name = "Il nome dev'essere di almeno 2 lettere."
     }
-    if (phone.length < 10) {
-      newErrors.phone = "Phone number must be at least 10 digits."
+    if (phone.length < 9) {
+      newErrors.phone = "Il numero di telefono dev'essere di almeno 9 numeri."
     }
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      newErrors.email = "Please enter a valid email address."
+      newErrors.email = "inserisci una email valida."
     }
     if (!nextCallDate) {
-      newErrors.nextCallDate = "Please select a date for the next call."
+      newErrors.nextCallDate = "Seleziona una data."
     }
 
     setErrors(newErrors)
@@ -219,14 +237,14 @@ export default function AddContactPage() {
             <TextEditor value={description} onChange={setDescription}/>
           </div>
           <div className="w-full md:w-1/2 flex flex-col items-center">
-            <h2 className="text-xl font-semibold mb-4">Prossima Chiamata:</h2>
+            <h2 className="text-2xl font-bold mb-6">Prossima Chiamata:</h2>
             <CustomCalendar
               selected={nextCallDate}
               onSelect={setNextCallDate}
             />
             {errors.nextCallDate && <p className="mt-1 text-sm text-red-600 ">{errors.nextCallDate}</p>}
             {nextCallDate && (
-              <p className="mt-2 text-sm text-muted-foreground text-lg">
+              <p className="mt-2 text-muted-foreground text-lg text-2xl mb-6">
                 Data Selezionata: {format(nextCallDate, 'dd-MM-yyyy', { locale: it })}
               </p>
             )}
@@ -274,6 +292,54 @@ export default function AddContactPage() {
           </Button>
         </div>
       </form>
+
+      <button
+          onClick={fetchContacts}
+          className="ml-4 bg-blue-500 text-white p-2 rounded-lg"
+          disabled={!nextCallDate || isLoading}
+        >
+          {isLoading ? "Loading..." : "Fetch Contacts"}
+        </button>
+        {existingContacts.length > 0 ? (
+  <div className="bg-white rounded-lg shadow-md p-6 w-full mb-6">
+    <h2 className="text-xl font-semibold mb-4">Contatti:</h2>
+    {existingContacts.map((existingContact, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4" key={index}>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Nome:</label>
+          <p className="mt-1 text-lg">{existingContact.name}</p>
+        </div>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Telefono:</label>
+          <p className="mt-1 text-lg">{existingContact.phone}</p>
+        </div>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Email:</label>
+          <p className="mt-1 text-lg">{existingContact.email}</p>
+        </div>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Prossima Chiamata:</label>
+          <p className="mt-1 text-lg">
+            {existingContact.nextCallDate
+              ? format(new Date(existingContact.nextCallDate), "dd-MM-yyyy")
+              : "Nessuna data disponibile"}
+          </p>
+        </div>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
+          <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
+        </div>
+        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+          <label className="text-sm font-medium text-gray-700">Descrizione:</label>
+          <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
+        </div>
+      </div>
+    ))}
+  </div>
+) : (
+  <p>Nessun contatto trovato per la data selezionata.</p>
+)}
+      
     </div>
   )
 }

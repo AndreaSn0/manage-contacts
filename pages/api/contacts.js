@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     if (req.query.range) {
       try {
         const startDate = startOfDay(new Date());
-        const endDate = addDays(startDate, 30); // Up to 30 days from today
+        const endDate = addDays(startDate, 90); // Up to 30 days from today
 
         const counts = await collection.aggregate([
           {
