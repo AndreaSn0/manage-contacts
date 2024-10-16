@@ -71,7 +71,7 @@ export default function AddContactPage() {
       const response = await fetch(`/api/day-contacts?date=${formattedDate}`);
       
       const data = await response.json();
-      console.log(nextCallDate);
+      console.log(formattedDate);
       // Ensure the data is an array and not undefined/null
       if (Array.isArray(data)) {
         setExistingContacts(data);
