@@ -310,7 +310,7 @@ export default function AddContactPage() {
               : "Nessuna data disponibile"}</h2>
     {existingContacts.map((existingContact, index) => (
       <div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4" key={index}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 top-5" key={index}>
         <div className="flex flex-col p-4 border rounded-lg border-gray-300">
           <label className="text-sm font-medium text-gray-700">Nome:</label>
           <p className="mt-1 text-lg">{existingContact.name}</p>
