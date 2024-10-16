@@ -27,11 +27,11 @@ export default async function handler(req, res) {
   const collection = db.collection("contactsCollection");
 
   if (req.method === "GET") {
-    const { date } = new Date(req.query);
+    const { date } = req.query.date;
     try{
     const existingContacts = await collection.find({ date }).toArray();
     console.log(date);
-        return res.status(200).json({ message: { date}});
+        return res.status(200).json(existingContacts);
       } catch (error) {
         return res.status(500).json({ message: "Error retrieving contacts from date." });
       }
