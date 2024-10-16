@@ -115,7 +115,7 @@ export default async function handler(req, res) {
         name,
         phone,
         email,
-        nextCallDate: new Date(nextCallDate), // Ensure this is a Date object
+        nextCallDate, 
         timesCalled: parseInt(timesCalled, 10),
         description
       };
