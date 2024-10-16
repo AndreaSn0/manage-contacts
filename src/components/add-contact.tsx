@@ -54,6 +54,7 @@ export default function AddContactPage() {
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
   const [nextCallDate, setNextCallDate] = useState<Date | undefined>(undefined)
+  const [newDateChosen, setNewDateChosen] = useState(true)
   const [timesCalled, setTimesCalled] = useState("0")
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false)
@@ -243,6 +244,7 @@ export default function AddContactPage() {
             <CustomCalendar
               selected={nextCallDate}
               onSelect={setNextCallDate}
+              onChange={setNewDateChosen}
             />
             {errors.nextCallDate && <p className="mt-1 text-sm text-red-600 ">{errors.nextCallDate}</p>}
             {nextCallDate && (
@@ -251,7 +253,9 @@ export default function AddContactPage() {
               </p>
             )}
         {nextCallDate && <div
-        onClick={!(!nextCallDate || isLoading) ? fetchContacts : undefined}
+        onClick={(e) => {!(!nextCallDate || isLoading) ? fetchContacts : undefined;
+          setNewDateChosen(false);
+        }}
         className={`ml-4 bg-black text-white p-2 rounded-lg cursor-pointer w-auto text-center ${(!nextCallDate || isLoading) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
         style={{ pointerEvents: (!nextCallDate || isLoading) ? 'none' : 'auto' }}
       >
@@ -301,12 +305,13 @@ export default function AddContactPage() {
           </Button>
         </div>
       </form>
-        {((existingContacts.length > 0) && nextCallDate)? (
+        {((existingContacts.length > 0) && nextCallDate && !newDateChosen)? (
   <div className="bg-white rounded-lg shadow-md p-6 w-full mb-6">
     <h2 className="text-xl font-semibold mb-4">Contatti da chiamare nel {nextCallDate
               ? format(new Date(nextCallDate), "dd-MM-yyyy")
               : "Nessuna data disponibile"}</h2>
     {existingContacts.map((existingContact, index) => (
+      <div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4" key={index}>
         <div className="flex flex-col p-4 border rounded-lg border-gray-300">
           <label className="text-sm font-medium text-gray-700">Nome:</label>
@@ -324,11 +329,12 @@ export default function AddContactPage() {
           <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
           <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
         </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Descrizione:</label>
-          <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
-        </div>
       </div>
+              <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+              <label className="text-sm font-medium text-gray-700">Descrizione:</label>
+              <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
+            </div>
+            </div>
     ))}
   </div>
 ) : (

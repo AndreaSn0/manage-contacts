@@ -10,10 +10,11 @@ interface DayData {
 
 interface CalendarProps {
   selected?: Date | null;
-  onSelect?: (date: Date) => void; // Add this prop to your CalendarProps
+  onSelect?: (date: Date) => void;
+  onChange?: (changed: boolean) => void;  // Modify this prop to return a boolean
 }
 
-export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
+export default function CustomCalendar({ selected, onSelect, onChange }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [monthData, setMonthData] = useState<{ [key: number]: DayData }>({});
   const [contactCounts, setContactCounts] = useState<{ date: string; count: number }[]>([]);
@@ -24,7 +25,6 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
     'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
   ];
 
-  // Fetch contact counts on component mount
   useEffect(() => {
     const fetchContactCounts = async () => {
       try {
@@ -40,24 +40,18 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
   }, []);
 
   const getDayData = (date: Date): DayData => {
-    // Subtract one day from the current date
     const previousDate = new Date(date);
     previousDate.setDate(previousDate.getDate() + 1);
+    const formattedDate = previousDate.toISOString().split('T')[0]; 
   
-    // Format the date to 'yyyy-MM-dd'
-    const formattedDate = previousDate.toISOString().split('T')[0]; // This gives 'yyyy-MM-dd'
-  
-    // Find the matching entry in contactCounts by date
     const contactCountEntry = contactCounts.find(contact => contact.date === formattedDate);
   
     return {
-      contracts: 0, // Assuming contracts is always 0, replace as needed
-      calls: contactCountEntry ? contactCountEntry.count : 0 // Get count or 0 if no match
+      contracts: 0,
+      calls: contactCountEntry ? contactCountEntry.count : 0
     };
   };
-  
 
-  // This useEffect now depends on both currentDate and contactCounts
   useEffect(() => {
     const newMonthData: { [key: number]: DayData } = {};
     const daysInMonth = getDaysInMonth(currentDate);
@@ -66,14 +60,14 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
       newMonthData[day] = getDayData(date);
     }
     setMonthData(newMonthData);
-  }, [currentDate, contactCounts]); // Added contactCounts as a dependency
+  }, [currentDate, contactCounts]);
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
 
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay(); // Returns the index of the first day of the month
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
   };
 
   const handlePrevMonth = () => {
@@ -87,7 +81,12 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
 
   const handleDateClick = (day: number) => {
     const newDate = new Date(Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), day));
-    onSelect && onSelect(newDate);
+    
+    if (onSelect) onSelect(newDate);  // Call onSelect when a date is selected
+
+    if (onChange && (!selected || newDate.toDateString() !== selected.toDateString())) {
+      onChange(true);  // Trigger onChange if a new date is selected
+    }
   };
 
   const getColorClass = (contracts: number, calls: number) => {
@@ -104,12 +103,11 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-  
-    // Fill empty slots for the first week of the month
+
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(<div key={`empty-${i}`} className="p-1 sm:p-2 text-center text-gray-400"></div>);
     }
-  
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       const isToday = date.toDateString() === today.toDateString();
@@ -117,10 +115,9 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
       const isPassed = date < yesterday && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
       const dayData = monthData[day] || { contracts: 0, calls: 0 };
       const colorClass = getColorClass(dayData.contracts, dayData.calls);
-  
-      // Check if total is less than 10 for hover effect
+
       const isLowTotal = (dayData.contracts + dayData.calls) < 10;
-  
+
       days.push(
         <div
           key={day}
@@ -131,7 +128,7 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
             ${colorClass}
             ${isSelected ? colorClass.replace('bg-', 'bg-opacity-75 ') : ''}
             ${!isPassed ? 'hover:bg-opacity-75 transition-all duration-200 ease-in-out cursor-pointer' : ''}
-            ${isLowTotal ? 'hover:bg-gray-200' : ''} // Darker background on hover if total < 10
+            ${isLowTotal ? 'hover:bg-gray-200' : ''}
             h-16 sm:h-24
           `}
           role="button"
@@ -152,10 +149,9 @@ export default function CustomCalendar({ selected, onSelect}: CalendarProps) {
         </div>
       );
     }
-  
+
     return days;
   };
-  
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
