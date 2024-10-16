@@ -27,9 +27,9 @@ export default async function handler(req, res) {
   const collection = db.collection("contactsCollection");
 
   if (req.method === "GET") {
-    const { date } = req.query.date;
+    const { date } = req.query;
     try{
-    const existingContacts = await collection.find({ date }).toArray();
+    const existingContacts = await collection.findAll({ date: date }).toArray();
     console.log(date);
         return res.status(200).json(existingContacts);
       } catch (error) {
