@@ -250,6 +250,13 @@ export default function AddContactPage() {
                 Data Selezionata: {format(nextCallDate, 'dd-MM-yyyy', { locale: it })}
               </p>
             )}
+        {nextCallDate && <div
+        onClick={!(!nextCallDate || isLoading) ? fetchContacts : undefined}
+        className={`ml-4 bg-black text-white p-2 rounded-lg cursor-pointer w-auto text-center ${(!nextCallDate || isLoading) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}
+        style={{ pointerEvents: (!nextCallDate || isLoading) ? 'none' : 'auto' }}
+      >
+        {isLoading ? "Caricamento..." : "Guarda contatti in quella data"}
+      </div>}
           </div>
         </div>
         {existingContact && (
@@ -294,19 +301,13 @@ export default function AddContactPage() {
           </Button>
         </div>
       </form>
-
-      <button
-          onClick={fetchContacts}
-          className="ml-4 bg-blue-500 text-white p-2 rounded-lg"
-          disabled={!nextCallDate || isLoading}
-        >
-          {isLoading ? "Loading..." : "Fetch Contacts"}
-        </button>
-        {existingContacts.length > 0 ? (
+        {((existingContacts.length > 0) && nextCallDate)? (
   <div className="bg-white rounded-lg shadow-md p-6 w-full mb-6">
-    <h2 className="text-xl font-semibold mb-4">Contatti:</h2>
+    <h2 className="text-xl font-semibold mb-4">Contatti da chiamare nel {nextCallDate
+              ? format(new Date(nextCallDate), "dd-MM-yyyy")
+              : "Nessuna data disponibile"}</h2>
     {existingContacts.map((existingContact, index) => (
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4" key={index}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4" key={index}>
         <div className="flex flex-col p-4 border rounded-lg border-gray-300">
           <label className="text-sm font-medium text-gray-700">Nome:</label>
           <p className="mt-1 text-lg">{existingContact.name}</p>
@@ -320,14 +321,6 @@ export default function AddContactPage() {
           <p className="mt-1 text-lg">{existingContact.email}</p>
         </div>
         <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Prossima Chiamata:</label>
-          <p className="mt-1 text-lg">
-            {existingContact.nextCallDate
-              ? format(new Date(existingContact.nextCallDate), "dd-MM-yyyy")
-              : "Nessuna data disponibile"}
-          </p>
-        </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
           <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
           <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
         </div>
@@ -339,7 +332,7 @@ export default function AddContactPage() {
     ))}
   </div>
 ) : (
-  <p>Nessun contatto trovato per la data selezionata.</p>
+  <p></p>
 )}
       
     </div>
