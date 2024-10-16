@@ -308,7 +308,9 @@ export default function AddContactPage() {
       </form>
         {((existingContacts.length > 0) && nextCallDate && !newDateChosen)? (
 <div className="container mx-auto p-4 max-w-3xl">
-      <h1 className="text-2xl font-bold mb-6">Lista Contatti</h1>
+      <h1 className="text-2xl font-bold mb-6">Contatti da chiamare nel {nextCallDate
+              ? format(new Date(nextCallDate), "dd-MM-yyyy")
+              : "Nessuna data disponibile"}</h1>
       {existingContacts.map((existingContact, index) => (
         <Card key={index} className="mb-4 overflow-hidden">
           <CardContent className="p-0">
@@ -331,7 +333,7 @@ export default function AddContactPage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <PhoneCall className="w-4 h-4" />
-                  {existingContact.timesCalled} chiamate
+                  {existingContact.timesCalled} Chiamate effettuate
                 </div>
               </div>
             </div>
