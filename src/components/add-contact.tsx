@@ -1,5 +1,5 @@
 'use client'
-
+import React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { CustomCalendar } from "@/components/ui/custom-calendar"
 import { Input } from "@/components/ui/input"
 import {TextEditor} from '@/components/ui/text-editor';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Select,
   SelectContent,
@@ -304,36 +305,49 @@ export default function AddContactPage() {
         </div>
       </form>
         {((existingContacts.length > 0) && nextCallDate && !newDateChosen)? (
-  <div className="bg-white rounded-lg shadow-md p-6 w-full mb-6">
-    <h2 className="text-xl font-semibold mb-4">Contatti da chiamare nel {nextCallDate
+
+
+
+
+
+
+
+<div className="container mx-auto p-4">
+<h1 className="text-2xl font-bold mb-4">Contatti da chiamare nel {nextCallDate
               ? format(new Date(nextCallDate), "dd-MM-yyyy")
-              : "Nessuna data disponibile"}</h2>
-    {existingContacts.map((existingContact, index) => (
-      <div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10" key={index}>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Nome:</label>
-          <p className="mt-1 text-lg">{existingContact.name}</p>
-        </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Telefono:</label>
-          <p className="mt-1 text-lg">{existingContact.phone}</p>
-        </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Email:</label>
-          <p className="mt-1 text-lg">{existingContact.email}</p>
-        </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
-          <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
-        </div>
-      </div>
-              <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-              <label className="text-sm font-medium text-gray-700">Descrizione:</label>
-              <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
-            </div>
-            </div>
+              : "Nessuna data disponibile"}</h1>
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead className="w-[50px]">#</TableHead>
+      <TableHead>Nome</TableHead>
+      <TableHead>Telefono</TableHead>
+      <TableHead>Email</TableHead>
+      <TableHead>Numero Chiamate già effettuate</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+  {existingContacts.map((existingContact, index) => (
+      <React.Fragment key={index}>
+        <TableRow>
+          <TableCell rowSpan={2} className="font-medium">
+            {index + 1}
+          </TableCell>
+          <TableCell>{existingContact.name}</TableCell>
+          <TableCell>{existingContact.phone}</TableCell>
+          <TableCell>{existingContact.email}</TableCell>
+          <TableCell>{existingContact.timesCalled}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell colSpan={4} className="italic text-gray-600">
+            Descrizione: <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
     ))}
+  </TableBody>
+</Table>
+    ))
   </div>
 ) : (
   <p></p>
