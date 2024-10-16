@@ -28,13 +28,11 @@ export default async function handler(req, res) {
   
     if (req.method === "GET") {
       const { date } = req.query;
-      
+  
       try {
-        // Ensure the date is parsed and time is set to 00:00:00
         const queryDate = new Date(date);
         queryDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
   
-        // Find contacts where the date matches exactly (since stored dates also have time set to 00:00:00)
         const existingContacts = await collection.find({ date: queryDate }).toArray();
         
         return res.status(200).json(existingContacts);

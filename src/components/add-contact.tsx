@@ -67,7 +67,8 @@ export default function AddContactPage() {
   
   const fetchContacts = async () => {
     try {
-      const response = await fetch(`/api/day-contacts?date=${nextCallDate}`);
+      const formattedDate = nextCallDate ? format(nextCallDate, 'yyyy-MM-dd') : undefined;
+      const response = await fetch(`/api/day-contacts?date=${formattedDate}`);
       
       const data = await response.json();
       console.log(nextCallDate);
