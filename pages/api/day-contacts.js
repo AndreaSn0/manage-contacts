@@ -31,9 +31,7 @@ export default async function handler(req, res) {
   
       try {
         const queryDate = new Date(date);
-        queryDate.setHours(0, 0, 0, 0); // Set time to 00:00:00
-  
-        const existingContacts = await collection.find({ date: queryDate }).toArray();
+        const existingContacts = await collection.find({ nextCallDate: queryDate }).toArray();
         
         return res.status(200).json(existingContacts);
       } catch (error) {
