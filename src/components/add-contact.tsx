@@ -309,30 +309,36 @@ export default function AddContactPage() {
               ? format(new Date(nextCallDate), "dd-MM-yyyy")
               : "Nessuna data disponibile"}</h2>
     {existingContacts.map((existingContact, index) => (
-      <div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 top-5" key={index}>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Nome:</label>
-          <p className="mt-1 text-lg">{existingContact.name}</p>
+        <div key={index} className="mb-4"> {/* Margin-bottom for spacing between entries */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2"> {/* Added margin-bottom for spacing */}
+          <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+            <label className="text-sm font-medium text-gray-700"># {index + 1}</label> {/* Displaying number */}
+          </div>
+          <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+            <label className="text-sm font-medium text-gray-700">Nome:</label>
+            <p className="mt-1 text-lg">{existingContact.name}</p>
+          </div>
+          <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+            <label className="text-sm font-medium text-gray-700">Telefono:</label>
+            <p className="mt-1 text-lg">{existingContact.phone}</p>
+          </div>
+          <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+            <label className="text-sm font-medium text-gray-700">Email:</label>
+            <p className="mt-1 text-lg">{existingContact.email}</p>
+          </div>
+          <div className="flex flex-col p-4 border rounded-lg border-gray-300">
+            <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
+            <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
+          </div>
         </div>
         <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Telefono:</label>
-          <p className="mt-1 text-lg">{existingContact.phone}</p>
+          <label className="text-sm font-medium text-gray-700">Descrizione:</label>
+          <p
+            className="mt-1 text-lg"
+            dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}
+          ></p>
         </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Email:</label>
-          <p className="mt-1 text-lg">{existingContact.email}</p>
         </div>
-        <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-          <label className="text-sm font-medium text-gray-700">Numero Chiamate già effettuate:</label>
-          <p className="mt-1 text-lg">{existingContact.timesCalled}</p>
-        </div>
-      </div>
-              <div className="flex flex-col p-4 border rounded-lg border-gray-300">
-              <label className="text-sm font-medium text-gray-700">Descrizione:</label>
-              <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
-            </div>
-            </div>
     ))}
   </div>
 ) : (
