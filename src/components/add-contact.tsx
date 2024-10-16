@@ -338,7 +338,7 @@ export default function AddContactPage() {
           <TableCell>{existingContact.email}</TableCell>
           <TableCell>{existingContact.timesCalled}</TableCell>
         </TableRow>
-        <TableRow border-b border-black>
+        <TableRow className="border-b border-black">
           <TableCell colSpan={4} className="italic text-gray-600">
             Descrizione: <p className="mt-1 text-lg" dangerouslySetInnerHTML={{ __html: transformString(existingContact.description) }}></p>
           </TableCell>
